@@ -1,6 +1,11 @@
 import { Component } from '@angular/core';
 import { AccountMovement } from '../../../../models/account-movement.model';
 import { AccountMovementsService } from '../../../../services/account-movements.service';
+import { AccountState } from '../../state/account.reducer';
+import { Store } from '@ngrx/store';
+import { Observable, tap } from 'rxjs';
+import { getAccountsMovementsSelector } from '../../state/account.selector';
+import { AccountPageActions } from '../../state/actions';
 
 
 
@@ -10,7 +15,11 @@ import { AccountMovementsService } from '../../../../services/account-movements.
   styleUrls: ['./account-movements.component.scss'],
 })
 export class AccountMovementsComponent {
-  accountMovements: AccountMovement[] = [];
+  accountMovements$: Observable<AccountMovement[]> = this.store.select(
+    getAccountsMovementsSelector
+  ).pipe(tap(() => {
+    this.loading = false;
+  }));
   headerColumns: string[] = ['date', 'description', 'amount'];
   loading: boolean = true;
   totalRegisters = 50;
@@ -18,23 +27,11 @@ export class AccountMovementsComponent {
   pagination: number[] = [];
   actualPage = 1;
 
-  constructor(private _accountMovementsService: AccountMovementsService) {}
+  constructor(private store: Store<AccountState>) {}
 
   ngOnInit(): void {
-    this.getAccountMovements(true);
-  }
-
-  private getAccountMovements(isFirstLoad?: boolean) {
-    this.loading = true;
-    this._accountMovementsService.getAccountMovements().subscribe({
-      next: (accountMovements) => {
-        this.accountMovements = accountMovements;
-        if (isFirstLoad) {
-          this.fillPagination();
-        }
-        this.loading = false;
-      },
-    });
+    this.store.dispatch(AccountPageActions.getAccountMovements());
+    this.fillPagination();
   }
 
   private fillPagination() {
@@ -63,7 +60,8 @@ export class AccountMovementsComponent {
         break;
     }
     if (action !== 'nothing') {
-      this.getAccountMovements();
+      this.loading = true;
+      this.store.dispatch(AccountPageActions.getAccountMovements());
     }
   }
 }

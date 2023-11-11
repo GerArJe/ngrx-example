@@ -6,7 +6,7 @@
       </tr>
     </thead>
     <tbody>
-      <tr *ngFor="let accountMovement of accountMovements">
+      <tr *ngFor="let accountMovement of accountMovements$ | async">
         <td>{{ accountMovement.date | date }}</td>
         <td>{{ accountMovement.description }}</td>
         <td appCurrency>{{ accountMovement.amount | currency : "USD" }}</td>
