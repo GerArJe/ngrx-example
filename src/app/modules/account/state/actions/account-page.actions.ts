@@ -1,5 +1,8 @@
-import { createAction } from "@ngrx/store";
+import { createAction, createActionGroup, emptyProps } from "@ngrx/store";
 
-export const getAccountMovements =  createAction(
-    '[Account] Get Account Movements'
-)
+export const AccountPageActions = createActionGroup({
+    source: 'Account Page Actions',
+    events: {
+        getAccountMovements: emptyProps()
+    }
+});

@@ -1,18 +1,16 @@
-import { AfterViewInit, Directive, ElementRef } from '@angular/core';
+import { AfterViewInit, Directive, ElementRef, inject } from '@angular/core';
 
 @Directive({
-  selector: '[appCurrency]'
+  selector: '[appCurrency]',
 })
 export class CurrencyDirective implements AfterViewInit {
-  constructor(private element: ElementRef) {
-  }
+  private element = inject(ElementRef);
 
   ngAfterViewInit(): void {
     if ((this.element.nativeElement.textContent as string).includes('-')) {
-      this.element.nativeElement.style.color = 'red'
+      this.element.nativeElement.style.color = 'red';
     } else {
-      this.element.nativeElement.style.color = 'green'
+      this.element.nativeElement.style.color = 'green';
     }
   }
-
 }

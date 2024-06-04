@@ -1,13 +1,14 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
+import { StoreModule } from '@ngrx/store';
+import { EffectsModule } from '@ngrx/effects';
+
 import { AccountRoutingModule } from './account-routing.module';
 import { AccountMovementsComponent } from './pages/account-movements/account-movements.component';
 import { SharedModule } from '../shared/shared.module';
-import { StoreModule } from '@ngrx/store';
-import { accountReducer } from './state/account.reducer';
-import { EffectsModule } from '@ngrx/effects';
-import { AccountEffects } from './state/account.effect';
+import { accountFeatureKey, accountReducer } from './state/reducers/account.reducer';
+import { AccountEffects } from './state/effects/account.effect';
 
 
 @NgModule({
@@ -16,7 +17,7 @@ import { AccountEffects } from './state/account.effect';
     CommonModule,
     AccountRoutingModule,
     SharedModule,
-    StoreModule.forFeature('accounts', accountReducer),
+    StoreModule.forFeature(accountFeatureKey, accountReducer),
     EffectsModule.forFeature([AccountEffects])
   ]
 })

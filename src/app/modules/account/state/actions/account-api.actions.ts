@@ -1,13 +1,13 @@
-import { createAction, props } from '@ngrx/store';
+import { createActionGroup, props } from '@ngrx/store';
 
 import { AccountMovement } from '../../../../models/account-movement.model';
 
-export const getAccountMovementsSuccess = createAction(
-  '[Account] Get Account Movements Success',
-  props<{ accountMovements: AccountMovement[] }>()
-);
-
-export const getAccountMovementsFailure = createAction(
-  '[Account] Get Account Movements Failure',
-  props<{ error: string }>()
-);
+export const AccountApiActions = createActionGroup({
+  source: 'Account API Actions',
+  events: {
+    getAccountMovementsSuccess: props<{
+      accountMovements: AccountMovement[];
+    }>(),
+    getAccountMovementsFailure: props<{ error: string }>(),
+  },
+});

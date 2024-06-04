@@ -1,11 +1,8 @@
-import { Component } from '@angular/core';
-import { AccountMovement } from '../../../../models/account-movement.model';
-import { AccountMovementsService } from '../../../../services/account-movements.service';
-import { AccountState } from '../../state/account.reducer';
-import { Store } from '@ngrx/store';
+import { Component, inject } from '@angular/core';
 import { Observable, tap } from 'rxjs';
-import { getAccountsMovementsSelector } from '../../state/account.selector';
-import { AccountPageActions } from '../../state/actions';
+
+import { AccountMovement } from '../../../../models/account-movement.model';
+import { StateFacadeService } from '../../state/services/state-facade.service';
 
 
 
@@ -15,9 +12,8 @@ import { AccountPageActions } from '../../state/actions';
   styleUrls: ['./account-movements.component.scss'],
 })
 export class AccountMovementsComponent {
-  accountMovements$: Observable<AccountMovement[]> = this.store.select(
-    getAccountsMovementsSelector
-  ).pipe(tap(() => {
+  private state = inject(StateFacadeService);
+  accountMovements$: Observable<AccountMovement[]> = this.state.accountMovements$.pipe(tap(() => {
     this.loading = false;
   }));
   headerColumns: string[] = ['date', 'description', 'amount'];
@@ -27,10 +23,8 @@ export class AccountMovementsComponent {
   pagination: number[] = [];
   actualPage = 1;
 
-  constructor(private store: Store<AccountState>) {}
-
   ngOnInit(): void {
-    this.store.dispatch(AccountPageActions.getAccountMovements());
+    this.state.getAccountMovements();
     this.fillPagination();
   }
 
@@ -61,7 +55,7 @@ export class AccountMovementsComponent {
     }
     if (action !== 'nothing') {
       this.loading = true;
-      this.store.dispatch(AccountPageActions.getAccountMovements());
+      this.state.getAccountMovements();
     }
   }
 }
