@@ -2,7 +2,7 @@ import { Component, inject } from '@angular/core';
 import { Observable, tap } from 'rxjs';
 
 import { AccountMovement } from '../../../../models/account-movement.model';
-import { StateFacadeService } from '../../state/services/state-facade.service';
+import { AccountMovementsService } from '../../../../services/account-movements.service';
 
 
 
@@ -12,10 +12,8 @@ import { StateFacadeService } from '../../state/services/state-facade.service';
   styleUrls: ['./account-movements.component.scss'],
 })
 export class AccountMovementsComponent {
-  private state = inject(StateFacadeService);
-  accountMovements$: Observable<AccountMovement[]> = this.state.accountMovements$.pipe(tap(() => {
-    this.loading = false;
-  }));
+  private accountMovementsService = inject(AccountMovementsService);
+  accountMovements: AccountMovement[] = [];
   headerColumns: string[] = ['date', 'description', 'amount'];
   loading: boolean = true;
   totalRegisters = 50;
@@ -24,8 +22,18 @@ export class AccountMovementsComponent {
   actualPage = 1;
 
   ngOnInit(): void {
-    this.state.getAccountMovements();
+    this.getAccountMovements();
     this.fillPagination();
+  }
+
+  private getAccountMovements() {
+    this.loading = true;
+    this.accountMovementsService.getAccountMovements().subscribe({
+      next: (accountMovements) => {
+        this.accountMovements = accountMovements;
+        this.loading = false;
+      },
+    });
   }
 
   private fillPagination() {
@@ -54,8 +62,7 @@ export class AccountMovementsComponent {
         break;
     }
     if (action !== 'nothing') {
-      this.loading = true;
-      this.state.getAccountMovements();
+      this.getAccountMovements();
     }
   }
 }
